@@ -11,7 +11,7 @@ import cv2
 : 첨부된 컬러 영상들 
 '''
 
-dir_path = "point processing/images"
+dir_path = "Point processing/images"
 img_name = "baboon.png"
 test_image_path = f"{dir_path}/{img_name}"
 

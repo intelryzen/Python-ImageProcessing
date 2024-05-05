@@ -10,7 +10,7 @@ import cv2
 
 '''
 
-dir_path = "point processing/images"
+dir_path = "Point processing/images"
 img_name = "HW1-2  Fig0525(c)(aerial_view_turb_c_0pt001).tif"
 test_image_path = f"{dir_path}/{img_name}"
 

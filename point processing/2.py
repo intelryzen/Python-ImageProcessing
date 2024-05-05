@@ -10,7 +10,7 @@ import cv2
 : 첨부된 럏0316 영상에 대해 수행 
 '''
 
-dir_path = "point processing/images"
+dir_path = "Point processing/images"
 img_name = "HW1-1 Fig0316(4)(bottom_left).jpg"
 test_image_path = f"{dir_path}/{img_name}"
 
