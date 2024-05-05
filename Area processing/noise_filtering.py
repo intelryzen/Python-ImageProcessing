@@ -5,9 +5,6 @@ dir_path = "Area processing/images"
 img_name = "HW1-2  Fig0525(c)(aerial_view_turb_c_0pt001).tif"
 test_image_path = f"{dir_path}/{img_name}"
 
-# 이미지 불러오기
-img = cv2.imread(test_image_path, cv2.IMREAD_GRAYSCALE)
-
 def show_img(image, title="image"): 
     cv2.imshow(title, image)  # 이미지 출력 (BGR)
     # cv2.imwrite(title + img_name, image)
@@ -65,7 +62,11 @@ def apply_median(image, size):
             output[i, j] = np.median(input)
     show_img(output)
 
-apply_gaussian(img)
-apply_gaussian2(img)
-apply_median(img, 3)
-apply_median(img, 5)
+if __name__ == "__main__":
+    # 이미지 불러오기
+    img = cv2.imread(test_image_path, cv2.IMREAD_GRAYSCALE)
+
+    apply_gaussian(img)
+    apply_gaussian2(img)
+    apply_median(img, 3)
+    apply_median(img, 5)
