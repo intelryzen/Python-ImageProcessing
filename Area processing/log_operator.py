@@ -1,7 +1,7 @@
 import cv2
 
 dir_path = "Area processing/images/Edge Detection"
-img_name = "lenna_color.bmp"
+img_name = "Fig0327(a)(tungsten_original).jpg"
 test_image_path = f"{dir_path}/{img_name}"
 
 def show_img(image, title="image"): 
@@ -10,16 +10,18 @@ def show_img(image, title="image"):
     # cv2.waitKey(0)            # 키보드 입력 대기 (아무키 입력시 꺼짐)
     # cv2.destroyAllWindows()   # 나타는 Window 제거
 
+def log(image, sigma):
+    gaussian = cv2.GaussianBlur(image, (0, 0), sigmaX=sigma, sigmaY=sigma)
+    output = cv2.Laplacian(gaussian, cv2.CV_64F)
+    show_img(output, title=f"sigma {sigma}")
 
-def canny(image, threshold1=50, threshold2=200):
-    edges = cv2.Canny(image, threshold1=threshold1, threshold2=threshold2)
-    show_img(edges, title=f"thres {threshold1} and {threshold2}")
-
-def canny_color(image, threshold1=50, threshold2=200):
+def log_color(image, sigma):
     hsi = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     intensity = hsi[:,:,2]
-    edges = cv2.Canny(intensity, threshold1=threshold1, threshold2=threshold2)
-    show_img(edges, title=f"thres {threshold1} and {threshold2}")
+
+    gaussian = cv2.GaussianBlur(intensity, (0, 0), sigmaX=sigma, sigmaY=sigma)
+    output = cv2.Laplacian(gaussian, cv2.CV_64F)
+    show_img(output, title=f"sigma {sigma}")
 
 if __name__ == "__main__":
     # 이미지 불러오기
@@ -28,4 +30,5 @@ if __name__ == "__main__":
     # Color 이미지
     img2 = cv2.imread(test_image_path, cv2.IMREAD_COLOR)
 
-    canny_color(img2, threshold1=150, threshold2=200)
+    log(img, sigma=0.3)
+    # log_color(img2, sigma=0.3)

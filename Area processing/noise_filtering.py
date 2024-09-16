@@ -3,7 +3,7 @@ import cv2
 import math
 
 dir_path = "Area processing/images/Noise Filtering"
-img_name = "Gaussian noise.png"
+img_name = "Lena_noise.png"
 test_image_path = f"{dir_path}/{img_name}"
 
 def show_img(image, title="image"): 
@@ -23,7 +23,7 @@ def apply_kernel(image, kernel):
     height, width = image.shape
     kernel_height = kernel.shape[0]
     padded_image = apply_zero_padding(image, kernel)
-    output = np.zeros_like(image)
+    output = np.zeros_like(image, dtype=image.dtype)
     for i in range(height):
         for j in range(width):
             input = padded_image[i:i+kernel_height, j:j+kernel_height]
@@ -39,7 +39,6 @@ def apply_gaussian_by_sigma(image, sigma):
     kernel = kernel / np.sum(kernel)
     kernel2 = np.outer(kernel, kernel.T)
     kernel2 = kernel2 / np.sum(kernel2)
-    print(kernel2)
     output = apply_kernel(image, kernel2)
     show_img(output, f"gaussian sigma {sigma}")
 
@@ -77,11 +76,52 @@ def apply_median(image, size):
             output[i, j] = list[len(list) // 2] 
     show_img(output, f"median {size}x{size}")
 
+# 미디안 필터링 컬러
+def apply_median_color(image, size):
+    hsi = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    intensity = hsi[:,:,2]
+
+    height, width = intensity.shape
+    padded_image = apply_zero_padding(intensity, np.zeros((size, size)))
+    output = np.zeros_like(intensity)
+    for i in range(height):
+        for j in range(width):
+            input = padded_image[i:i+size, j:j+size]
+            list = sorted(input.flatten().tolist()) 
+            output[i, j] = list[len(list) // 2] 
+    hsi[:, :, 2] = output
+    rgb = cv2.cvtColor(hsi, cv2.COLOR_HSV2BGR)
+    show_img(rgb, f"median {size}x{size}")
+
+# 가우시안 시그마 적용
+def apply_gaussian_color_by_sigma(image, sigma):
+    length = math.ceil(sigma * 2)
+    if length % 2 == 0: length += 1
+    kernel = np.arange(-(length // 2), (length // 2) + 1, dtype=np.float32)
+    kernel = np.vectorize(lambda x: np.exp(-(x ** 2) / (2 * sigma ** 2)))(kernel)
+    kernel = kernel / np.sum(kernel)
+    kernel2 = np.outer(kernel, kernel.T)
+    kernel2 = kernel2 / np.sum(kernel2)
+
+
+    hsi = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    intensity = hsi[:,:,2]
+    output = apply_kernel(intensity, kernel2)
+    hsi[:, :, 2] = output
+    rgb = cv2.cvtColor(hsi, cv2.COLOR_HSV2BGR)
+    show_img(rgb, f"gaussian sigma {sigma}")
+
 if __name__ == "__main__":
     # 이미지 불러오기
     img = cv2.imread(test_image_path, cv2.IMREAD_GRAYSCALE)
 
-    # apply_gaussian_by_sigma(img, 1)
+    # Color 이미지
+    img2 = cv2.imread(test_image_path, cv2.IMREAD_COLOR)
+
+    # apply_median_color(img2, 5)
+    # apply_gaussian_color_by_sigma(img2, 6)
+    apply_gaussian_by_sigma(img, 5)
+    # apply_gaussian_by_sigma(img, 10)
+
     # apply_gaussian2(img)
     # apply_median(img, 3)
-    apply_median(img, 10)
